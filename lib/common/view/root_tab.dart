@@ -9,26 +9,63 @@ class RootTab extends StatefulWidget {
   State<RootTab> createState() => _RootTabState();
 }
 
-class _RootTabState extends State<RootTab> {
+class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
+  late TabController controller;
   int index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(length: 4, vsync: this);
+    controller.addListener(tabListener); //controller에 변화가 있을때마다 실행되는것
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(tabListener);
+    super.dispose();
+  }
+
+  void tabListener() {
+    setState(() {
+      index = controller.index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '수달 딜리버리',
-      child: Center(
-        child: Text('RootTab'),
+      child: TabBarView(
+        physics: NeverScrollableScrollPhysics(),//스와이핑 금지
+        controller: controller,
+        children: [
+          Center(
+              child: Container(
+            child: Text('홈'),
+          )),
+          Center(
+              child: Container(
+            child: Text('음식'),
+          )),
+          Center(
+              child: Container(
+            child: Text('주문'),
+          )),
+          Center(
+              child: Container(
+            child: Text('프로필'),
+          )),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: PRIMARY_COLOR,
         unselectedItemColor: BODY_TEXT_COLOR,
         selectedFontSize: 10,
         unselectedFontSize: 10,
-        type: BottomNavigationBarType.shifting,//fixed
+        type: BottomNavigationBarType.shifting, //fixed
         onTap: (int index) {
-          setState(() {
-            this.index = index;
-          });
+          controller.animateTo(index);
         },
         currentIndex: index,
         items: [
