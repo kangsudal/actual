@@ -29,6 +29,7 @@ class RestaurantModel {
     required this.deliveryFee,
   });
 
+  //factory constructor를 만드는 이유: json을 넣기만하면 자동으로 매핑이 되게하기위해
   factory RestaurantModel.fromJson({
     required Map<String, dynamic> json,
   }) {
