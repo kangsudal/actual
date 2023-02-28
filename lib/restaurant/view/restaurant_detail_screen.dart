@@ -14,7 +14,7 @@ class RestaurantDetailScreen extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  Future<Map<String,dynamic>> getRestaurantDetail() async {
+  Future<Map<String, dynamic>> getRestaurantDetail() async {
     final dio = Dio();
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
     final resp = await dio.get(
@@ -30,9 +30,9 @@ class RestaurantDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: "테스트:불타는 떡볶이",
-      child: FutureBuilder<Map<String,dynamic>>(
+      child: FutureBuilder<Map<String, dynamic>>(
           future: getRestaurantDetail(),
-          builder: (context, AsyncSnapshot<Map<String,dynamic>> snapshot) {
+          builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
             if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(),
@@ -44,7 +44,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                 //일반 위젯을 slivers에 넣으려면 SliverToBoxAdapter로 감싸줘야한다.
                 renderTop(model: item),
                 renderLable(),
-                renderProducts(),
+                renderProducts(products: item.products),
               ],
             );
           }),
@@ -66,23 +66,34 @@ class RestaurantDetailScreen extends StatelessWidget {
     );
   }
 
-  SliverPadding renderProducts() {
+  SliverPadding renderProducts({
+    required List<RestaurantProductModel> products,
+  }) {
     return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, index) => Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: ProductCard(),
-          ),
+          (context, index) {
+            RestaurantProductModel model = products[index];
+            return Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: ProductCard.fromModel(model: model),
+            );
+          },
+          childCount: products.length
         ),
       ),
     );
   }
 
-  SliverToBoxAdapter renderTop({required RestaurantDetailModel model,}) {
+  SliverToBoxAdapter renderTop({
+    required RestaurantDetailModel model,
+  }) {
     return SliverToBoxAdapter(
-      child: RestaurantCard.fromModel(model: model,isDetail: true,),
+      child: RestaurantCard.fromModel(
+        model: model,
+        isDetail: true,
+      ),
     );
   }
 }
