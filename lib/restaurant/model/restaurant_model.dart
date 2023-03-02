@@ -1,4 +1,5 @@
 import 'package:actual/common/const/data.dart';
+import 'package:actual/utils/data_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 ///* 에는 소스 파일의 이름이 들어갑니다. flutter pub run build_runner build
@@ -18,7 +19,7 @@ class RestaurantModel {
 
   ///변화시키고싶은 속성 위에다가 @JsonKey를 써준다.
   @JsonKey(
-    fromJson: pathToUrl,
+    fromJson: DataUtils.pathToUrl,
   )
   final String thumbUrl;
   final List<String> tags;
@@ -67,9 +68,4 @@ class RestaurantModel {
 
   ///현재 인스턴스(RestaurantModel)에서 json으로 바꿀때 사용
   Map<String, dynamic> toJson() => _$RestaurantModelToJson(this);
-
-  ///@JsonKey에 들어갈 함수는 static 함수로 만들어줘야한다.
-  static pathToUrl(String thumbUrl) {
-    return "http://$ip$thumbUrl";
-  }
 }
